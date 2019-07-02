@@ -1,0 +1,39 @@
+version: '3.5'
+services:
+ zabbix-agent:
+   image: zabbix/zabbix-agent:alpine-4.2-latest
+   container_name: zabbix-agent   
+   hostname: zabbix-agent  
+   restart: always
+   ports:
+     - "10050:10050"
+   volumes:
+     - ./config/zbx_env/etc/zabbix/zabbix_agentd.d:/etc/zabbix/zabbix_agentd.d:ro
+     - ./config/zbx_env/var/lib/zabbix/modules:/var/lib/zabbix/modules:ro
+     - ./config/zbx_env/var/lib/zabbix/enc:/var/lib/zabbix/enc:ro
+     - ./config/zbx_env/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:ro
+   environment:
+      - ZBX_SERVER_HOST=192.168.62.81
+      - ZBX_HOSTNAME=mysql
+      - ZBX_ACTIVE_ALLOW=false
+      - ZBX_ACTIVESERVERS=192.168.62.81
+   depends_on:
+      - mariadb-server
+   deploy:
+   pid: "host"
+
+ mariadb-server:
+    image: mariadb:10.4
+    container_name: mariadb
+    hostname: mariadb
+    restart: always
+    volumes:
+       - ./config/etc/mysql:/etc/mysql:rw
+       - /var/lib/mysql:/var/lib/mysql:rw
+    environment:
+     - MYSQL_ROOT_PASSWORD=N@R&8#gT$gXH[tv2
+     - MYSQL_PASSWORD=ZNmA]>EWtk5GSs4U
+    ports:
+       - "3306:3306"
+    user: root
+    stop_grace_period: 1m
